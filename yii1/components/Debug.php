@@ -1,16 +1,17 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: agolovko
- * Date: 8/28/15
- * Time: 11:58 AM
+ * Date: 25.11.15
+ * Time: 10:39
  */
 
-namespace app\components;
-
-use yii\helpers\Json;
-use yii\web\View;
-
+/**
+ * Class Debug
+ * used for show debug info in different interfaces such a browser console (now implemented only this)
+ * todo add debug info into CLI interface
+ */
 class Debug
 {
     const TRACE_LEVEL = 5;
@@ -48,10 +49,10 @@ class Debug
         }
         $script .=
             'console.log(' . PHP_EOL .
-            '   "%c " + JSON.stringify('. Json::encode($args) .', null, 2),' . PHP_EOL .
+            '   "%c " + JSON.stringify('. CJSON::encode($args) .', null, 2),' . PHP_EOL .
             '   "color: #2222aa; font-weight:bold;"' . PHP_EOL .
             ');' . PHP_EOL;
-        \Yii::$app->view->registerJs($script, View::POS_END, 'jsDebug_' . $cnt);
+        Yii::app()->getClientScript()->registerJs($script, CClientScript::POS_END, 'jsDebug_' . $cnt);
     }
 
     /**
@@ -72,7 +73,7 @@ class Debug
                 continue;
             }
             // remove absolute path from filePath
-            $filePath = str_replace(\Yii::getAlias('@app'), '', $trace[$i]['file']);
+            $filePath = str_replace(Yii::getPathOfAlias('webroot'), '', $trace[$i]['file']);
             $filePath = addslashes($filePath);
             $traceInfo[] = $filePath . ': ' . $trace[$i]['line'];
         }
